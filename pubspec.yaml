@@ -1,0 +1,32 @@
+name: mind_vault
+description: 常记 Evermemo - 把今日一念，留给来日回望。
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  flutter_riverpod: 2.6.1
+  riverpod_annotation: 2.6.1
+  flutter_local_notifications: ^21.0.0
+  intl: ^0.20.2
+  uuid: ^4.2.2
+  share_plus: ^13.1.0
+  image_picker: ^1.1.2
+  record: ^6.2.0
+  shared_preferences: ^2.3.4
+  supabase_flutter: ^2.8.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 3.0.1
+
+flutter:
+  uses-material-design: true
