@@ -6,8 +6,9 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: c.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -22,21 +23,21 @@ class AboutScreen extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: c.surface,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded,
-                          size: 18, color: AppColors.textPrimary),
+                      child: Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 18, color: c.textPrimary),
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Center(
                       child: Text(
                         '关于常记',
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: c.textPrimary,
                         ),
                       ),
                     ),
@@ -51,30 +52,30 @@ class AboutScreen extends StatelessWidget {
               width: 88,
               height: 88,
               decoration: BoxDecoration(
-                color: AppColors.accent.withValues(alpha: 0.15),
+                color: c.accent.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.edit_note_rounded,
                 size: 44,
-                color: AppColors.accent,
+                color: c.accent,
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
+            Text(
               '常记',
               style: TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: c.textPrimary,
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
+            Text(
               'Evermemo',
               style: TextStyle(
                 fontSize: 15,
-                color: AppColors.textTertiary,
+                color: c.textTertiary,
                 letterSpacing: 1,
               ),
             ),
@@ -83,35 +84,35 @@ class AboutScreen extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: c.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text(
+              child: Text(
                 'v1.0.0',
                 style: TextStyle(
                   fontSize: 13,
-                  color: AppColors.textTertiary,
+                  color: c.textTertiary,
                 ),
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               '把今日一念，留给来日回望。',
               style: TextStyle(
                 fontSize: 15,
-                color: AppColors.textSecondary,
+                color: c.textSecondary,
                 letterSpacing: 1,
               ),
             ),
             const Spacer(flex: 2),
             // 版权信息
-            const Padding(
-              padding: EdgeInsets.only(bottom: 40),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 40),
               child: Text(
                 'Made with Flutter',
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppColors.textTertiary,
+                  color: c.textTertiary,
                 ),
               ),
             ),

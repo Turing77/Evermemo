@@ -4,11 +4,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:record/record.dart';
 import 'dart:async';
 import '../database/thought_db.dart';
+import '../models/thought.dart';
 import '../providers/thought_provider.dart';
 import '../utils/theme.dart';
 
 class AddThoughtScreen extends ConsumerStatefulWidget {
-  const AddThoughtScreen({super.key});
+  final Thought? thought;
+
+  const AddThoughtScreen({super.key, this.thought});
 
   @override
   ConsumerState<AddThoughtScreen> createState() => _AddThoughtScreenState();
@@ -22,6 +25,9 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
   late AnimationController _animController;
   List<String> _allTags = [];
   final List<XFile> _pickedImages = [];
+  List<String> _existingImagePaths = [];
+
+  bool get _isEditMode => widget.thought != null;
 
   // 录音相关
   final AudioRecorder _audioRecorder = AudioRecorder();
@@ -47,9 +53,17 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
       vsync: this,
     )..forward();
     _loadTags();
-    Future.delayed(const Duration(milliseconds: 300), () {
-      _focusNode.requestFocus();
-    });
+    if (_isEditMode) {
+      final thought = widget.thought!;
+      _contentController.text = thought.content;
+      _selectedTag = thought.tag;
+      _audioPath = thought.audioPath;
+      _existingImagePaths = thought.imagePathList;
+    } else {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        _focusNode.requestFocus();
+      });
+    }
   }
 
   Future<void> _loadTags() async {
@@ -83,21 +97,37 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
       return;
     }
 
-    final imagePaths =
-        _pickedImages.isNotEmpty ? _pickedImages.map((f) => f.path).join(',') : null;
+    // 合并已有图片路径和新选图片路径
+    final allImagePaths = [
+      ..._existingImagePaths,
+      ..._pickedImages.map((f) => f.path),
+    ];
+    final imagePaths = allImagePaths.isNotEmpty ? allImagePaths.join(',') : null;
 
-    ref.read(thoughtListProvider.notifier).addThought(
-          content,
-          tag: _selectedTag,
-          imagePaths: imagePaths,
-          audioPath: _audioPath,
-        );
+    if (_isEditMode) {
+      ref.read(thoughtListProvider.notifier).updateThought(
+            widget.thought!.copyWith(
+              content: content,
+              tag: _selectedTag,
+              imagePaths: imagePaths,
+              audioPath: _audioPath,
+              updatedAt: DateTime.now(),
+            ),
+          );
+    } else {
+      ref.read(thoughtListProvider.notifier).addThought(
+            content,
+            tag: _selectedTag,
+            imagePaths: imagePaths,
+            audioPath: _audioPath,
+          );
+    }
 
     _animController.reverse().then((_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('已收好这一念'),
+          SnackBar(
+            content: Text(_isEditMode ? '已更新这一念' : '已收好这一念'),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -172,29 +202,30 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
   }
 
   void _showAddTagDialog() {
+    final c = AppColors.of(context);
     final controller = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: c.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
+        title: Text(
           '新建标签',
           style: TextStyle(
-            fontSize: 17,
+            fontSize: AppFont.scale(context, ref, 17),
             fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+            color: c.textPrimary,
           ),
         ),
         content: TextField(
           controller: controller,
           autofocus: true,
-          style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+          style: TextStyle(color: c.textPrimary, fontSize: AppFont.scale(context, ref, 15)),
           decoration: InputDecoration(
             hintText: '输入标签名称',
-            hintStyle: const TextStyle(color: AppColors.textTertiary),
+            hintStyle: TextStyle(color: c.textTertiary),
             filled: true,
-            fillColor: AppColors.surfaceVariant,
+            fillColor: c.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -204,8 +235,8 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('取消',
-                style: TextStyle(color: AppColors.textSecondary)),
+            child: Text('取消',
+                style: TextStyle(color: c.textSecondary)),
           ),
           TextButton(
             onPressed: () {
@@ -220,9 +251,9 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
               }
               Navigator.pop(ctx);
             },
-            child: const Text('确定',
+            child: Text('确定',
                 style: TextStyle(
-                    color: AppColors.accent, fontWeight: FontWeight.w600)),
+                    color: c.accent, fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -249,11 +280,13 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
+    final bodyFont = AppFont.body(context, ref);
     return AnimatedBuilder(
       animation: _animController,
       builder: (context, child) {
         return Scaffold(
-          backgroundColor: AppColors.background,
+          backgroundColor: c.background,
           body: SafeArea(
             child: Column(
               children: [
@@ -274,31 +307,31 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                         children: [
                           TextButton(
                             onPressed: () => Navigator.pop(context),
-                            child: const Text(
+                            child: Text(
                               '取消',
                               style: TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize: 15,
+                                color: c.textSecondary,
+                                fontSize: AppFont.scale(context, ref, 15),
                               ),
                             ),
                           ),
                           const Spacer(),
-                          const Text(
-                            '写下一念',
+                          Text(
+                            _isEditMode ? '编辑想法' : '写下一念',
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: AppFont.scale(context, ref, 17),
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
+                              color: c.textPrimary,
                             ),
                           ),
                           const Spacer(),
                           TextButton(
                             onPressed: _save,
-                            child: const Text(
+                            child: Text(
                               '完成',
                               style: TextStyle(
-                                color: AppColors.accent,
-                                fontSize: 15,
+                                color: c.accent,
+                                fontSize: AppFont.scale(context, ref, 15),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -335,7 +368,7 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                               constraints: const BoxConstraints(minHeight: 160),
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
-                                color: AppColors.surface,
+                                color: c.surface,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: TextField(
@@ -343,21 +376,21 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                                 focusNode: _focusNode,
                                 maxLines: null,
                                 maxLength: 500,
-                                style: const TextStyle(
-                                  fontSize: 16,
+                                style: TextStyle(
+                                  fontSize: AppFont.scale(context, ref, 16),
                                   height: 1.7,
-                                  color: AppColors.textPrimary,
+                                  color: c.textPrimary,
                                 ),
-                                decoration: const InputDecoration(
-                                  hintText: '此刻，你想记录什么？',
+                                decoration: InputDecoration(
+                                  hintText: _isEditMode ? '修改你的想法…' : '此刻，你想记录什么？',
                                   hintStyle: TextStyle(
-                                    color: AppColors.textTertiary,
-                                    fontSize: 16,
+                                    color: c.textTertiary,
+                                    fontSize: AppFont.scale(context, ref, 16),
                                   ),
                                   border: InputBorder.none,
                                   counterStyle: TextStyle(
-                                    color: AppColors.textTertiary,
-                                    fontSize: 12,
+                                    color: c.textTertiary,
+                                    fontSize: AppFont.scale(context, ref, 12),
                                   ),
                                 ),
                                 buildCounter: (context,
@@ -368,9 +401,9 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                                     alignment: Alignment.centerRight,
                                     child: Text(
                                       '$currentLength/$maxLength',
-                                      style: const TextStyle(
-                                        color: AppColors.textTertiary,
-                                        fontSize: 12,
+                                      style: TextStyle(
+                                        color: c.textTertiary,
+                                        fontSize: AppFont.scale(context, ref, 12),
                                       ),
                                     ),
                                   );
@@ -379,23 +412,32 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                             ),
                           ),
                         ),
-                        // 已选图片预览
-                        if (_pickedImages.isNotEmpty) ...[
+                        // 图片预览（已有图片 + 新选图片）
+                        if (_existingImagePaths.isNotEmpty ||
+                            _pickedImages.isNotEmpty) ...[
                           const SizedBox(height: 12),
                           SizedBox(
                             height: 80,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
-                              itemCount: _pickedImages.length,
+                              itemCount: _existingImagePaths.length +
+                                  _pickedImages.length,
                               separatorBuilder: (_, __) =>
                                   const SizedBox(width: 8),
                               itemBuilder: (context, index) {
+                                final isExisting =
+                                    index < _existingImagePaths.length;
+                                final path = isExisting
+                                    ? _existingImagePaths[index]
+                                    : _pickedImages[index -
+                                            _existingImagePaths.length]
+                                        .path;
                                 return Stack(
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.circular(12),
                                       child: Image.network(
-                                        _pickedImages[index].path,
+                                        path,
                                         width: 80,
                                         height: 80,
                                         fit: BoxFit.cover,
@@ -404,13 +446,13 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                                           width: 80,
                                           height: 80,
                                           decoration: BoxDecoration(
-                                            color: AppColors.surfaceVariant,
+                                            color: c.surfaceVariant,
                                             borderRadius:
                                                 BorderRadius.circular(12),
                                           ),
-                                          child: const Icon(
+                                          child: Icon(
                                             Icons.image_outlined,
-                                            color: AppColors.textTertiary,
+                                            color: c.textTertiary,
                                           ),
                                         ),
                                       ),
@@ -421,14 +463,20 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                                       child: GestureDetector(
                                         onTap: () {
                                           setState(() {
-                                            _pickedImages.removeAt(index);
+                                            if (isExisting) {
+                                              _existingImagePaths
+                                                  .removeAt(index);
+                                            } else {
+                                              _pickedImages.removeAt(index -
+                                                  _existingImagePaths.length);
+                                            }
                                           });
                                         },
                                         child: Container(
                                           width: 20,
                                           height: 20,
-                                          decoration: const BoxDecoration(
-                                            color: AppColors.danger,
+                                          decoration: BoxDecoration(
+                                            color: c.danger,
                                             shape: BoxShape.circle,
                                           ),
                                           child: const Icon(Icons.close,
@@ -450,8 +498,8 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                                 horizontal: 16, vertical: 12),
                             decoration: BoxDecoration(
                               color: _isRecording
-                                  ? AppColors.danger.withValues(alpha: 0.1)
-                                  : AppColors.accent.withValues(alpha: 0.1),
+                                  ? c.danger.withValues(alpha: 0.1)
+                                  : c.accent.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(14),
                             ),
                             child: Row(
@@ -462,8 +510,8 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                                       : Icons.mic_none_outlined,
                                   size: 20,
                                   color: _isRecording
-                                      ? AppColors.danger
-                                      : AppColors.accent,
+                                      ? c.danger
+                                      : c.accent,
                                 ),
                                 const SizedBox(width: 10),
                                 Text(
@@ -471,10 +519,10 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                                       ? '录音中 ${_formatRecordTime(_recordSeconds)}'
                                       : '已录音',
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: AppFont.scale(context, ref, 14),
                                     color: _isRecording
-                                        ? AppColors.danger
-                                        : AppColors.accent,
+                                        ? c.danger
+                                        : c.accent,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
@@ -486,9 +534,9 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                                         _audioPath = null;
                                       });
                                     },
-                                    child: const Icon(Icons.close,
+                                    child: Icon(Icons.close,
                                         size: 18,
-                                        color: AppColors.textTertiary),
+                                        color: c.textTertiary),
                                   ),
                               ],
                             ),
@@ -574,26 +622,26 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                                       decoration: BoxDecoration(
                                         color: isSelected
                                             ? color.withValues(alpha: 0.15)
-                                            : AppColors.surface,
+                                            : c.surface,
                                         borderRadius:
                                             BorderRadius.circular(20),
                                         border: Border.all(
                                           color: isSelected
                                               ? color
-                                              : AppColors.divider,
+                                              : c.divider,
                                           width: isSelected ? 1.5 : 1,
                                         ),
                                       ),
                                       child: Text(
                                         tag,
                                         style: TextStyle(
-                                          fontSize: 13,
+                                          fontSize: AppFont.scale(context, ref, 13),
                                           fontWeight: isSelected
                                               ? FontWeight.w600
                                               : FontWeight.normal,
                                           color: isSelected
                                               ? color
-                                              : AppColors.textSecondary,
+                                              : c.textSecondary,
                                         ),
                                       ),
                                     ),
@@ -605,24 +653,24 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 10),
                                     decoration: BoxDecoration(
-                                      color: AppColors.surfaceVariant,
+                                      color: c.surfaceVariant,
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
-                                        color: AppColors.divider,
+                                        color: c.divider,
                                       ),
                                     ),
-                                    child: const Row(
+                                    child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Icon(Icons.add_rounded,
                                             size: 14,
-                                            color: AppColors.textTertiary),
-                                        SizedBox(width: 4),
+                                            color: c.textTertiary),
+                                        const SizedBox(width: 4),
                                         Text(
                                           '新标签',
                                           style: TextStyle(
-                                            fontSize: 13,
-                                            color: AppColors.textTertiary,
+                                            fontSize: AppFont.scale(context, ref, 13),
+                                            color: c.textTertiary,
                                           ),
                                         ),
                                       ],
@@ -648,14 +696,15 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
 
   Widget _buildActionButton(IconData icon, String label,
       {VoidCallback? onTap, bool isActive = false}) {
+    final c = AppColors.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: isActive
-              ? AppColors.danger.withValues(alpha: 0.15)
-              : AppColors.surface,
+              ? c.danger.withValues(alpha: 0.15)
+              : c.surface,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
@@ -664,16 +713,16 @@ class _AddThoughtScreenState extends ConsumerState<AddThoughtScreen>
             Icon(icon,
                 size: 18,
                 color: isActive
-                    ? AppColors.danger
-                    : AppColors.textSecondary),
+                    ? c.danger
+                    : c.textSecondary),
             const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
-                fontSize: 13,
+                fontSize: AppFont.scale(context, ref, 13),
                 color: isActive
-                    ? AppColors.danger
-                    : AppColors.textSecondary,
+                    ? c.danger
+                    : c.textSecondary,
               ),
             ),
           ],

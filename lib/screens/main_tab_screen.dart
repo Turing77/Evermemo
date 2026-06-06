@@ -24,18 +24,19 @@ class _MainTabScreenState extends State<MainTabScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: c.background,
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
       ),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
+        decoration: BoxDecoration(
+          color: c.surface,
           border: Border(
             top: BorderSide(
-              color: AppColors.divider,
+              color: c.divider,
               width: 0.5,
             ),
           ),
@@ -58,6 +59,7 @@ class _MainTabScreenState extends State<MainTabScreen> {
   }
 
   Widget _buildNavItem(int index, IconData icon, IconData activeIcon, String label) {
+    final c = AppColors.of(context);
     final isSelected = _currentIndex == index;
     return Expanded(
       child: GestureDetector(
@@ -76,7 +78,7 @@ class _MainTabScreenState extends State<MainTabScreen> {
                 isSelected ? activeIcon : icon,
                 key: ValueKey(isSelected),
                 size: 24,
-                color: isSelected ? AppColors.accent : AppColors.textTertiary,
+                color: isSelected ? c.accent : c.textTertiary,
               ),
             ),
             const SizedBox(height: 4),
@@ -85,7 +87,7 @@ class _MainTabScreenState extends State<MainTabScreen> {
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                color: isSelected ? AppColors.accent : AppColors.textTertiary,
+                color: isSelected ? c.accent : c.textTertiary,
               ),
               child: Text(label),
             ),

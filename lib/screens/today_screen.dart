@@ -48,14 +48,15 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
   }
 
   void _showMenu() {
+    final c = AppColors.of(context);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (ctx) => Container(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: c.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -66,7 +67,7 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
               width: 36,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.textTertiary.withValues(alpha: 0.3),
+                color: c.textTertiary.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -113,6 +114,7 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
   }
 
   Widget _buildMenuTile(IconData icon, String title, VoidCallback onTap) {
+    final c = AppColors.of(context);
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -120,18 +122,18 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
         padding: const EdgeInsets.symmetric(vertical: 14),
         child: Row(
           children: [
-            Icon(icon, size: 22, color: AppColors.textSecondary),
+            Icon(icon, size: 22, color: c.textSecondary),
             const SizedBox(width: 16),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
-                color: AppColors.textPrimary,
+                color: c.textPrimary,
               ),
             ),
             const Spacer(),
-            const Icon(Icons.chevron_right_rounded,
-                size: 20, color: AppColors.textTertiary),
+            Icon(Icons.chevron_right_rounded,
+                size: 20, color: c.textTertiary),
           ],
         ),
       ),
@@ -140,6 +142,8 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
+    final bodyFont = AppFont.body(context, ref);
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,11 +159,11 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
+                      color: c.surface,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.menu_rounded,
-                        size: 20, color: AppColors.textSecondary),
+                    child: Icon(Icons.menu_rounded,
+                        size: 20, color: c.textSecondary),
                   ),
                 ),
                 const Spacer(),
@@ -173,11 +177,11 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppColors.accent,
+                      color: c.accent,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.add_rounded,
-                        size: 22, color: AppColors.background),
+                    child: Icon(Icons.add_rounded,
+                        size: 22, color: c.background),
                   ),
                 ),
               ],
@@ -190,29 +194,29 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   '常记',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: c.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   _getDateText(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.textTertiary,
+                    color: c.textTertiary,
                   ),
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   '今日回想',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary,
+                    color: c.textSecondary,
                   ),
                 ),
               ],
@@ -224,13 +228,13 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _isLoading
-                  ? const Center(
+                  ? Center(
                       child: SizedBox(
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.accent,
+                          color: c.accent,
                         ),
                       ),
                     )
@@ -257,16 +261,16 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: AppColors.accent,
+                        color: c.accent,
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           '写下一念',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.background,
+                            color: c.background,
                           ),
                         ),
                       ),
@@ -280,16 +284,16 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceVariant,
+                        color: c.surfaceVariant,
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           '随机一念',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: AppColors.textSecondary,
+                            color: c.textSecondary,
                           ),
                         ),
                       ),
@@ -305,6 +309,7 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
   }
 
   Widget _buildRecallCard(Thought thought) {
+    final c = AppColors.of(context);
     return GestureDetector(
       key: ValueKey(thought.id),
       onTap: () {
@@ -317,7 +322,7 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: c.surface,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -329,7 +334,7 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
                 Icon(
                   Icons.format_quote_rounded,
                   size: 28,
-                  color: AppColors.accent.withValues(alpha: 0.5),
+                  color: c.accent.withValues(alpha: 0.5),
                 ),
                 const Spacer(),
                 if (thought.tag != null && thought.tag!.isNotEmpty)
@@ -355,10 +360,10 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
             const SizedBox(height: 16),
             Text(
               thought.content,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 height: 1.8,
-                color: AppColors.textPrimary,
+                color: c.textPrimary,
               ),
               maxLines: 6,
               overflow: TextOverflow.ellipsis,
@@ -366,9 +371,9 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
             const SizedBox(height: 16),
             Text(
               DateFormat('yyyy年MM月dd日').format(thought.createdAt),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 12,
-                color: AppColors.textTertiary,
+                color: c.textTertiary,
               ),
             ),
           ],
@@ -378,35 +383,36 @@ class _TodayScreenState extends ConsumerState<TodayScreen> {
   }
 
   Widget _buildEmptyCard() {
+    final c = AppColors.of(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(40),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: c.surface,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Column(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.edit_note_rounded,
             size: 48,
-            color: AppColors.textTertiary,
+            color: c.textTertiary,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
             '还没有记录',
             style: TextStyle(
               fontSize: 16,
-              color: AppColors.textSecondary,
+              color: c.textSecondary,
             ),
           ),
-          SizedBox(height: 6),
+          const SizedBox(height: 6),
           Text(
             '写下你的第一念吧',
             style: TextStyle(
               fontSize: 13,
-              color: AppColors.textTertiary,
+              color: c.textTertiary,
             ),
           ),
         ],

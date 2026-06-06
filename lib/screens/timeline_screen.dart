@@ -50,6 +50,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     final thoughtsAsync = ref.watch(thoughtListProvider);
 
     return SafeArea(
@@ -57,14 +58,14 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 标题
-          const Padding(
-            padding: EdgeInsets.fromLTRB(20, 16, 20, 0),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
             child: Text(
               '时间线',
               style: TextStyle(
-                fontSize: 28,
+                fontSize: AppFont.scale(context, ref, 28),
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: c.textPrimary,
               ),
             ),
           ),
@@ -85,20 +86,20 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
+                      color: c.surface,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.chevron_left_rounded,
-                        size: 20, color: AppColors.textSecondary),
+                    child: Icon(Icons.chevron_left_rounded,
+                        size: 20, color: c.textSecondary),
                   ),
                 ),
                 const Spacer(),
                 Text(
                   _getMonthText(),
-                  style: const TextStyle(
-                    fontSize: 17,
+                  style: TextStyle(
+                    fontSize: AppFont.scale(context, ref, 17),
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: c.textPrimary,
                   ),
                 ),
                 const Spacer(),
@@ -113,11 +114,11 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: AppColors.surface,
+                      color: c.surface,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.chevron_right_rounded,
-                        size: 20, color: AppColors.textSecondary),
+                    child: Icon(Icons.chevron_right_rounded,
+                        size: 20, color: c.textSecondary),
                   ),
                 ),
               ],
@@ -133,9 +134,9 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                   child: Center(
                     child: Text(
                       d,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textTertiary,
+                      style: TextStyle(
+                        fontSize: AppFont.scale(context, ref, 12),
+                        color: c.textTertiary,
                       ),
                     ),
                   ),
@@ -155,10 +156,10 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Text(
               DateFormat('M月d日').format(_selectedDate),
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: AppFont.scale(context, ref, 14),
                 fontWeight: FontWeight.w500,
-                color: AppColors.textSecondary,
+                color: c.textSecondary,
               ),
             ),
           ),
@@ -166,13 +167,13 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
           // 当天记录
           Expanded(
             child: thoughtsAsync.when(
-              loading: () => const Center(
+              loading: () => Center(
                 child: SizedBox(
                   width: 24,
                   height: 24,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: AppColors.accent,
+                    color: c.accent,
                   ),
                 ),
               ),
@@ -218,9 +219,9 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                                 Text(
                                   DateFormat('HH:mm')
                                       .format(thought.createdAt),
-                                  style: const TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.textTertiary,
+                                  style: TextStyle(
+                                    fontSize: AppFont.scale(context, ref, 11),
+                                    color: c.textTertiary,
                                   ),
                                 ),
                                 const SizedBox(height: 6),
@@ -228,7 +229,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                                   width: 8,
                                   height: 8,
                                   decoration: BoxDecoration(
-                                    color: AppColors.accent
+                                    color: c.accent
                                         .withValues(alpha: 0.6),
                                     shape: BoxShape.circle,
                                   ),
@@ -240,7 +241,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                           Container(
                             width: 1,
                             height: 48,
-                            color: AppColors.divider,
+                            color: c.divider,
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -248,7 +249,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                               margin: const EdgeInsets.only(bottom: 12),
                               padding: const EdgeInsets.all(14),
                               decoration: BoxDecoration(
-                                color: AppColors.surface,
+                                color: c.surface,
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Column(
@@ -270,7 +271,7 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                                       child: Text(
                                         thought.tag!,
                                         style: TextStyle(
-                                          fontSize: 11,
+                                          fontSize: AppFont.scale(context, ref, 11),
                                           color: AppColors.getTagColor(
                                               thought.tag!),
                                         ),
@@ -278,10 +279,10 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                                     ),
                                   Text(
                                     thought.content,
-                                    style: const TextStyle(
-                                      fontSize: 14,
+                                    style: TextStyle(
+                                      fontSize: AppFont.scale(context, ref, 14),
                                       height: 1.6,
-                                      color: AppColors.textPrimary,
+                                      color: c.textPrimary,
                                     ),
                                     maxLines: 3,
                                     overflow: TextOverflow.ellipsis,
@@ -303,10 +304,38 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
     );
   }
 
+  // 统计当月每天的想法数量
+  Map<int, int> _thoughtCountByDay(List<Thought> allThoughts) {
+    final Map<int, int> counts = {};
+    for (final t in allThoughts) {
+      if (t.createdAt.year == _currentMonth.year &&
+          t.createdAt.month == _currentMonth.month) {
+        counts[t.createdAt.day] = (counts[t.createdAt.day] ?? 0) + 1;
+      }
+    }
+    return counts;
+  }
+
+  // 根据想法数量返回填充色透明度（0条=无填充，1条=0.08，逐级递增）
+  double _fillOpacity(int count) {
+    if (count <= 0) return 0;
+    if (count == 1) return 0.08;
+    if (count == 2) return 0.15;
+    if (count <= 4) return 0.25;
+    if (count <= 7) return 0.38;
+    return 0.5;
+  }
+
   Widget _buildCalendarGrid() {
+    final c = AppColors.of(context);
     final days = _calendarDays();
     final now = DateTime.now();
     final rows = <Widget>[];
+
+    // 获取当前 provider 中的想法列表来统计每日数量
+    final thoughtsAsync = ref.read(thoughtListProvider);
+    final allThoughts = thoughtsAsync.valueOrNull ?? [];
+    final dayCounts = _thoughtCountByDay(allThoughts);
 
     for (int i = 0; i < days.length; i += 7) {
       final weekDays = days.sublist(i, (i + 7).clamp(0, days.length));
@@ -325,6 +354,22 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                 final isToday = date.year == now.year &&
                     date.month == now.month &&
                     date.day == now.day;
+                final count = dayCounts[day] ?? 0;
+                final opacity = _fillOpacity(count);
+
+                // 背景色：选中 > 今天 > 有记录 > 无记录
+                Color bgColor;
+                if (isSelected) {
+                  bgColor = c.accent;
+                } else if (isToday) {
+                  bgColor = opacity > 0
+                      ? c.accent.withValues(alpha: opacity + 0.08)
+                      : c.accent.withValues(alpha: 0.1);
+                } else if (opacity > 0) {
+                  bgColor = c.accent.withValues(alpha: opacity);
+                } else {
+                  bgColor = Colors.transparent;
+                }
 
                 return Expanded(
                   child: GestureDetector(
@@ -335,26 +380,22 @@ class _TimelineScreenState extends ConsumerState<TimelineScreen> {
                       height: 42,
                       margin: const EdgeInsets.symmetric(horizontal: 2),
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.accent
-                            : isToday
-                                ? AppColors.accent.withValues(alpha: 0.1)
-                                : Colors.transparent,
+                        color: bgColor,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Center(
                         child: Text(
                           '$day',
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: AppFont.scale(context, ref, 14),
                             fontWeight: isSelected || isToday
                                 ? FontWeight.w600
                                 : FontWeight.normal,
                             color: isSelected
-                                ? AppColors.background
+                                ? c.background
                                 : isToday
-                                    ? AppColors.accent
-                                    : AppColors.textPrimary,
+                                    ? c.accent
+                                    : c.textPrimary,
                           ),
                         ),
                       ),

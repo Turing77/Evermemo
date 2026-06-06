@@ -68,8 +68,9 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: c.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -89,12 +90,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     parent: _titleController,
                     curve: Curves.easeOutCubic,
                   )),
-                  child: const Text(
+                  child: Text(
                     '常记',
                     style: TextStyle(
                       fontSize: 48,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: c.textPrimary,
                       letterSpacing: 4,
                     ),
                   ),
@@ -116,11 +117,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                   parent: _subtitleController,
                   curve: Curves.easeOutCubic,
                 )),
-                child: const Text(
+                child: Text(
                   '把今日一念，留给来日回望。',
                   style: TextStyle(
                     fontSize: 15,
-                    color: AppColors.textTertiary,
+                    color: c.textTertiary,
                     letterSpacing: 1,
                   ),
                 ),
@@ -137,7 +138,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: AppColors.accent,
+                      color: c.accent,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -146,7 +147,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: AppColors.textTertiary.withValues(alpha: 0.3),
+                      color: c.textTertiary.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -155,7 +156,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: AppColors.textTertiary.withValues(alpha: 0.3),
+                      color: c.textTertiary.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -180,15 +181,15 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     padding: const EdgeInsets.symmetric(
                         horizontal: 40, vertical: 14),
                     decoration: BoxDecoration(
-                      color: AppColors.accent,
+                      color: c.accent,
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    child: const Text(
+                    child: Text(
                       '开始记录',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.background,
+                        color: c.background,
                       ),
                     ),
                   ),

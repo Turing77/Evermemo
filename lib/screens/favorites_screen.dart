@@ -13,10 +13,12 @@ class FavoritesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final c = AppColors.of(context);
+    final bodyFont = AppFont.body(context, ref);
     final thoughtsAsync = ref.watch(thoughtListProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: c.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -31,21 +33,21 @@ class FavoritesScreen extends ConsumerWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: c.surface,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded,
-                          size: 18, color: AppColors.textPrimary),
+                      child: Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 18, color: c.textPrimary),
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Center(
                       child: Text(
                         '我的收藏',
                         style: TextStyle(
-                          fontSize: 17,
+                          fontSize: AppFont.scale(context, ref, 17),
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: c.textPrimary,
                         ),
                       ),
                     ),
@@ -57,13 +59,13 @@ class FavoritesScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             Expanded(
               child: thoughtsAsync.when(
-                loading: () => const Center(
+                loading: () => Center(
                   child: SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: AppColors.accent,
+                      color: c.accent,
                     ),
                   ),
                 ),

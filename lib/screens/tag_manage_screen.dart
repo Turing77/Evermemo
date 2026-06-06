@@ -8,11 +8,13 @@ class TagManageScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final c = AppColors.of(context);
+    final bodyFont = AppFont.body(context, ref);
     // 监听全局数据变化
     final thoughtsAsync = ref.watch(thoughtListProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: c.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -26,21 +28,21 @@ class TagManageScreen extends ConsumerWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: c.surface,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded,
-                          size: 18, color: AppColors.textPrimary),
+                      child: Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 18, color: c.textPrimary),
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Center(
                       child: Text(
                         '标签管理',
                         style: TextStyle(
-                          fontSize: 17,
+                          fontSize: AppFont.scale(context, ref, 17),
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: c.textPrimary,
                         ),
                       ),
                     ),
@@ -52,13 +54,13 @@ class TagManageScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             Expanded(
               child: thoughtsAsync.when(
-                loading: () => const Center(
+                loading: () => Center(
                   child: SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: AppColors.accent,
+                      color: c.accent,
                     ),
                   ),
                 ),
@@ -75,12 +77,12 @@ class TagManageScreen extends ConsumerWidget {
                     ..sort((a, b) => b.value.compareTo(a.value));
 
                   if (tags.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Text(
                         '还没有标签',
                         style: TextStyle(
-                          fontSize: 15,
-                          color: AppColors.textTertiary,
+                          fontSize: AppFont.scale(context, ref, 15),
+                          color: c.textTertiary,
                         ),
                       ),
                     );
@@ -97,7 +99,7 @@ class TagManageScreen extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 16),
                         decoration: BoxDecoration(
-                          color: AppColors.surface,
+                          color: c.surface,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Row(
@@ -113,17 +115,17 @@ class TagManageScreen extends ConsumerWidget {
                             const SizedBox(width: 14),
                             Text(
                               tag.key,
-                              style: const TextStyle(
-                                fontSize: 15,
-                                color: AppColors.textPrimary,
+                              style: TextStyle(
+                                fontSize: AppFont.scale(context, ref, 15),
+                                color: c.textPrimary,
                               ),
                             ),
                             const Spacer(),
                             Text(
                               '${tag.value}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: AppColors.textTertiary,
+                              style: TextStyle(
+                                fontSize: AppFont.scale(context, ref, 14),
+                                color: c.textTertiary,
                               ),
                             ),
                           ],

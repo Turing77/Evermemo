@@ -15,6 +15,8 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final c = AppColors.of(context);
+    final bodyFont = AppFont.body(context, ref);
     // 监听 thoughtListProvider 以自动刷新
     final thoughtsAsync = ref.watch(thoughtListProvider);
 
@@ -38,12 +40,12 @@ class ProfileScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 16),
-            const Text(
+            Text(
               '我的',
               style: TextStyle(
-                fontSize: 28,
+                fontSize: AppFont.scale(context, ref, 28),
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: c.textPrimary,
               ),
             ),
             const SizedBox(height: 24),
@@ -51,7 +53,7 @@ class ProfileScreen extends ConsumerWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppColors.surface,
+                color: c.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Column(
@@ -60,38 +62,38 @@ class ProfileScreen extends ConsumerWidget {
                     width: 72,
                     height: 72,
                     decoration: BoxDecoration(
-                      color: AppColors.accent.withValues(alpha: 0.15),
+                      color: c.accent.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.edit_note_rounded,
                       size: 36,
-                      color: AppColors.accent,
+                      color: c.accent,
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const Text(
+                  Text(
                     '常记',
                     style: TextStyle(
-                      fontSize: 22,
+                      fontSize: AppFont.scale(context, ref, 22),
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: c.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'Evermemo',
                     style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textTertiary,
+                      fontSize: AppFont.scale(context, ref, 13),
+                      color: c.textTertiary,
                     ),
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     '把今日一念，留给来日回望。',
                     style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
+                      fontSize: AppFont.scale(context, ref, 13),
+                      color: c.textSecondary,
                     ),
                   ),
                 ],
@@ -100,7 +102,7 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(child: _buildStatCard('想法', '$thoughtCount')),
+                Expanded(child: _buildStatCard(context, ref, '想法', '$thoughtCount')),
                 const SizedBox(width: 12),
                 Expanded(
                   child: GestureDetector(
@@ -109,12 +111,13 @@ class ProfileScreen extends ConsumerWidget {
                       MaterialPageRoute(
                           builder: (_) => const FavoritesScreen()),
                     ),
-                    child: _buildStatCard('收藏', '$favoriteCount'),
+                    child: _buildStatCard(context, ref, '收藏', '$favoriteCount'),
                   ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                     child: _buildStatCard(
+                        context, ref,
                         '连续天数',
                         consecutiveDays.when(
                           data: (days) => '$days',
@@ -125,18 +128,21 @@ class ProfileScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 24),
             _buildMenuItem(
+              context, ref,
               Icons.settings_outlined,
               '设置',
               () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const SettingsScreen())),
             ),
             _buildMenuItem(
+              context, ref,
               Icons.label_outline_rounded,
               '标签管理',
               () => Navigator.push(context,
                   MaterialPageRoute(builder: (_) => const TagManageScreen())),
             ),
             _buildMenuItem(
+              context, ref,
               Icons.info_outline_rounded,
               '关于常记',
               () => Navigator.push(context,
@@ -149,25 +155,25 @@ class ProfileScreen extends ConsumerWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: c.surface,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       '账号',
                       style: TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textTertiary,
+                        fontSize: AppFont.scale(context, ref, 13),
+                        color: c.textTertiary,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       SupabaseService.instance.currentUser?.email ?? '',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: AppColors.textPrimary,
+                      style: TextStyle(
+                        fontSize: AppFont.scale(context, ref, 15),
+                        color: c.textPrimary,
                       ),
                     ),
                   ],
@@ -180,15 +186,15 @@ class ProfileScreen extends ConsumerWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: c.surface,
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       '退出登录',
                       style: TextStyle(
-                        fontSize: 15,
-                        color: AppColors.danger,
+                        fontSize: AppFont.scale(context, ref, 15),
+                        color: c.danger,
                       ),
                     ),
                   ),
@@ -204,16 +210,16 @@ class ProfileScreen extends ConsumerWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
-                    color: AppColors.accent,
+                    color: c.accent,
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
                       '登录 / 注册',
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: AppFont.scale(context, ref, 15),
                         fontWeight: FontWeight.w600,
-                        color: AppColors.background,
+                        color: c.background,
                       ),
                     ),
                   ),
@@ -227,29 +233,30 @@ class ProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatCard(String label, String value) {
+  Widget _buildStatCard(BuildContext context, WidgetRef ref, String label, String value) {
+    final c = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: c.surface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         children: [
           Text(
             value,
-            style: const TextStyle(
-              fontSize: 24,
+            style: TextStyle(
+              fontSize: AppFont.scale(context, ref, 24),
               fontWeight: FontWeight.w600,
-              color: AppColors.accent,
+              color: c.accent,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: AppColors.textTertiary,
+            style: TextStyle(
+              fontSize: AppFont.scale(context, ref, 12),
+              color: c.textTertiary,
             ),
           ),
         ],
@@ -258,20 +265,21 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
+    final c = AppColors.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: c.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('退出登录',
-            style: TextStyle(color: AppColors.textPrimary)),
-        content: const Text('退出后本地数据会保留，云端同步将停止。',
-            style: TextStyle(color: AppColors.textSecondary)),
+        title: Text('退出登录',
+            style: TextStyle(color: c.textPrimary)),
+        content: Text('退出后本地数据会保留，云端同步将停止。',
+            style: TextStyle(color: c.textSecondary)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('取消',
-                style: TextStyle(color: AppColors.textTertiary)),
+            child: Text('取消',
+                style: TextStyle(color: c.textTertiary)),
           ),
           TextButton(
             onPressed: () async {
@@ -284,37 +292,38 @@ class ProfileScreen extends ConsumerWidget {
                 );
               }
             },
-            child: const Text('退出', style: TextStyle(color: AppColors.danger)),
+            child: Text('退出', style: TextStyle(color: c.danger)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildMenuItem(IconData icon, String label, VoidCallback onTap) {
+  Widget _buildMenuItem(BuildContext context, WidgetRef ref, IconData icon, String label, VoidCallback onTap) {
+    final c = AppColors.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 2),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: c.surface,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 22, color: AppColors.textSecondary),
+            Icon(icon, size: 22, color: c.textSecondary),
             const SizedBox(width: 16),
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 15,
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                fontSize: AppFont.scale(context, ref, 15),
+                color: c.textPrimary,
               ),
             ),
             const Spacer(),
-            const Icon(Icons.chevron_right_rounded,
-                size: 20, color: AppColors.textTertiary),
+            Icon(Icons.chevron_right_rounded,
+                size: 20, color: c.textTertiary),
           ],
         ),
       ),

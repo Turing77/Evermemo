@@ -35,27 +35,28 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
   }
 
   void _delete() {
+    final c = AppColors.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: c.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
+        title: Text(
           '确认删除',
           style: TextStyle(
-              fontSize: 17,
+              fontSize: AppFont.scale(context, ref, 17),
               fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary),
+              color: c.textPrimary),
         ),
-        content: const Text(
+        content: Text(
           '删除后无法恢复，确定要删除这条想法吗？',
-          style: TextStyle(fontSize: 15, color: AppColors.textSecondary),
+          style: TextStyle(fontSize: AppFont.scale(context, ref, 15), color: c.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('取消',
-                style: TextStyle(color: AppColors.textSecondary)),
+            child: Text('取消',
+                style: TextStyle(color: c.textSecondary)),
           ),
           TextButton(
             onPressed: () {
@@ -63,19 +64,29 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
               Navigator.pop(context); // close dialog
               Navigator.pop(context); // go back
             },
-            child: const Text('删除',
-                style: TextStyle(color: AppColors.danger)),
+            child: Text('删除',
+                style: TextStyle(color: c.danger)),
           ),
         ],
       ),
     );
   }
 
-  void _edit() {
-    Navigator.push(
+  Future<void> _edit() async {
+    await Navigator.push(
       context,
-      buildSlideRoute(const AddThoughtScreen()),
+      buildSlideRoute(AddThoughtScreen(thought: _thought)),
     );
+    // 编辑返回后，从 provider 获取最新数据刷新详情
+    final thoughts = ref.read(thoughtListProvider).valueOrNull;
+    if (thoughts != null) {
+      final updated = thoughts.where((t) => t.id == _thought.id).firstOrNull;
+      if (updated != null && mounted) {
+        setState(() {
+          _thought = updated;
+        });
+      }
+    }
   }
 
   void _share() {
@@ -84,8 +95,9 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: c.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -100,11 +112,11 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: c.surface,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded,
-                          size: 18, color: AppColors.textPrimary),
+                      child: Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 18, color: c.textPrimary),
                     ),
                   ),
                   const Spacer(),
@@ -119,11 +131,11 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: c.surface,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.more_horiz_rounded,
-                          size: 20, color: AppColors.textPrimary),
+                      child: Icon(Icons.more_horiz_rounded,
+                          size: 20, color: c.textPrimary),
                     ),
                   ),
                 ],
@@ -141,19 +153,19 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
                     Text(
                       DateFormat('yyyy年MM月dd日 HH:mm')
                           .format(_thought.createdAt),
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.textTertiary,
+                      style: TextStyle(
+                        fontSize: AppFont.scale(context, ref, 13),
+                        color: c.textTertiary,
                       ),
                     ),
                     const SizedBox(height: 16),
                     // 正文
                     Text(
                       _thought.content,
-                      style: const TextStyle(
-                        fontSize: 17,
+                      style: TextStyle(
+                        fontSize: AppFont.scale(context, ref, 17),
                         height: 1.8,
-                        color: AppColors.textPrimary,
+                        color: c.textPrimary,
                       ),
                     ),
                     if (_thought.tag != null &&
@@ -170,7 +182,7 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
                         child: Text(
                           '#${_thought.tag}',
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: AppFont.scale(context, ref, 13),
                             color: AppColors.getTagColor(_thought.tag!),
                             fontWeight: FontWeight.w500,
                           ),
@@ -195,11 +207,11 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
                                 width: 100,
                                 height: 100,
                                 decoration: BoxDecoration(
-                                  color: AppColors.surfaceVariant,
+                                  color: c.surfaceVariant,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Icon(Icons.image_outlined,
-                                    color: AppColors.textTertiary),
+                                child: Icon(Icons.image_outlined,
+                                    color: c.textTertiary),
                               ),
                             ),
                           );
@@ -214,19 +226,19 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 14),
                         decoration: BoxDecoration(
-                          color: AppColors.accent.withValues(alpha: 0.1),
+                          color: c.accent.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: const Row(
+                        child: Row(
                           children: [
                             Icon(Icons.play_circle_outline,
-                                size: 28, color: AppColors.accent),
-                            SizedBox(width: 12),
+                                size: 28, color: c.accent),
+                            const SizedBox(width: 12),
                             Text(
                               '语音记录',
                               style: TextStyle(
-                                fontSize: 15,
-                                color: AppColors.accent,
+                                fontSize: AppFont.scale(context, ref, 15),
+                                color: c.accent,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -241,26 +253,26 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.surfaceVariant,
+                          color: c.surfaceVariant,
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               '备注',
                               style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textTertiary,
+                                fontSize: AppFont.scale(context, ref, 12),
+                                color: c.textTertiary,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               _thought.note!,
-                              style: const TextStyle(
-                                fontSize: 14,
+                              style: TextStyle(
+                                fontSize: AppFont.scale(context, ref, 14),
                                 height: 1.6,
-                                color: AppColors.textSecondary,
+                                color: c.textSecondary,
                               ),
                             ),
                           ],
@@ -274,10 +286,10 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
             // 底部操作栏
             Container(
               padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-              decoration: const BoxDecoration(
-                color: AppColors.surface,
+              decoration: BoxDecoration(
+                color: c.surface,
                 border: Border(
-                  top: BorderSide(color: AppColors.divider, width: 0.5),
+                  top: BorderSide(color: c.divider, width: 0.5),
                 ),
               ),
               child: Row(
@@ -289,17 +301,17 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
                     '收藏',
                     _thought.isFavorite
                         ? const Color(0xFFFFD666)
-                        : AppColors.textSecondary,
+                        : c.textSecondary,
                     _toggleFavorite,
                   ),
                   _buildBottomAction(
-                      Icons.share_outlined, '分享', AppColors.textSecondary,
+                      Icons.share_outlined, '分享', c.textSecondary,
                       _share),
                   _buildBottomAction(
-                      Icons.edit_outlined, '编辑', AppColors.textSecondary,
+                      Icons.edit_outlined, '编辑', c.textSecondary,
                       _edit),
                   _buildBottomAction(
-                      Icons.delete_outline, '删除', AppColors.danger, _delete),
+                      Icons.delete_outline, '删除', c.danger, _delete),
                 ],
               ),
             ),
@@ -321,7 +333,7 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(fontSize: 11, color: color),
+              style: TextStyle(fontSize: AppFont.scale(context, ref, 11), color: color),
             ),
           ],
         ),
@@ -330,11 +342,12 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
   }
 
   Widget _buildMoreMenu() {
+    final c = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: c.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -350,6 +363,7 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
 
   Widget _buildMenuItem(IconData icon, String label, VoidCallback onTap,
       {bool isDestructive = false}) {
+    final c = AppColors.of(context);
     return GestureDetector(
       onTap: () {
         Navigator.pop(context);
@@ -362,16 +376,16 @@ class _ThoughtDetailScreenState extends ConsumerState<ThoughtDetailScreen> {
             Icon(icon,
                 size: 22,
                 color: isDestructive
-                    ? AppColors.danger
-                    : AppColors.textPrimary),
+                    ? c.danger
+                    : c.textPrimary),
             const SizedBox(width: 16),
             Text(
               label,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: AppFont.scale(context, ref, 16),
                 color: isDestructive
-                    ? AppColors.danger
-                    : AppColors.textPrimary,
+                    ? c.danger
+                    : c.textPrimary,
               ),
             ),
           ],

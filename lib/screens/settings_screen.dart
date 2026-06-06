@@ -45,6 +45,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _pickReminderTime() async {
+    final c = AppColors.of(context);
     final hour = ref.read(reminderHourProvider);
     final minute = ref.read(reminderMinuteProvider);
 
@@ -55,15 +56,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         return Theme(
           data: Theme.of(context).copyWith(
             timePickerTheme: TimePickerThemeData(
-              backgroundColor: AppColors.surface,
-              hourMinuteColor: AppColors.surfaceVariant,
-              hourMinuteTextColor: AppColors.textPrimary,
-              dayPeriodColor: AppColors.surfaceVariant,
-              dayPeriodTextColor: AppColors.textPrimary,
-              dialHandColor: AppColors.accent,
-              dialBackgroundColor: AppColors.surfaceVariant,
-              dialTextColor: AppColors.textPrimary,
-              entryModeIconColor: AppColors.textSecondary,
+              backgroundColor: c.surface,
+              hourMinuteColor: c.surfaceVariant,
+              hourMinuteTextColor: c.textPrimary,
+              dayPeriodColor: c.surfaceVariant,
+              dayPeriodTextColor: c.textPrimary,
+              dialHandColor: c.accent,
+              dialBackgroundColor: c.surfaceVariant,
+              dialTextColor: c.textPrimary,
+              entryModeIconColor: c.textSecondary,
             ),
           ),
           child: child!,
@@ -80,41 +81,46 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _showFontSizePicker() {
+    final c = AppColors.of(context);
     final current = ref.read(fontSizeProvider);
     showModalBottomSheet(
       context: context,
       builder: (ctx) => Container(
         padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: c.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               '字体大小',
               style: TextStyle(
-                fontSize: 17,
+                fontSize: AppFont.scale(context, ref, 17),
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: c.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
             ...[0, 1, 2].map((size) {
               final labels = ['小', '标准', '大'];
-              final sizes = [14.0, 16.0, 18.0];
+              final sizes = [
+                AppFont.scale(context, ref, 14),
+                AppFont.scale(context, ref, 16),
+                AppFont.scale(context, ref, 18),
+              ];
               return ListTile(
                 title: Text(
                   labels[size],
                   style: TextStyle(
                     fontSize: sizes[size],
-                    color: AppColors.textPrimary,
+                    color: c.textPrimary,
                     fontWeight: current == size ? FontWeight.w600 : FontWeight.normal,
                   ),
                 ),
                 trailing: current == size
-                    ? const Icon(Icons.check_rounded, color: AppColors.accent)
+                    ? Icon(Icons.check_rounded, color: c.accent)
                     : null,
                 onTap: () {
                   ref.read(fontSizeProvider.notifier).state = size;
@@ -130,34 +136,35 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   void _showThemePicker() {
+    final c = AppColors.of(context);
     final current = ref.read(themeModeProvider);
     showModalBottomSheet(
       context: context,
       builder: (ctx) => Container(
         padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: c.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
+            Text(
               '主题模式',
               style: TextStyle(
-                fontSize: 17,
+                fontSize: AppFont.scale(context, ref, 17),
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                color: c.textPrimary,
               ),
             ),
             const SizedBox(height: 16),
             ListTile(
-              leading: const Icon(Icons.dark_mode_outlined,
-                  color: AppColors.textSecondary),
-              title: const Text('深色',
-                  style: TextStyle(color: AppColors.textPrimary)),
+              leading: Icon(Icons.dark_mode_outlined,
+                  color: c.textSecondary),
+              title: Text('深色',
+                  style: TextStyle(color: c.textPrimary)),
               trailing: current == 0
-                  ? const Icon(Icons.check_rounded, color: AppColors.accent)
+                  ? Icon(Icons.check_rounded, color: c.accent)
                   : null,
               onTap: () {
                 ref.read(themeModeProvider.notifier).state = 0;
@@ -166,23 +173,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.light_mode_outlined,
-                  color: AppColors.textSecondary),
-              title: const Text('浅色',
-                  style: TextStyle(color: AppColors.textPrimary)),
+              leading: Icon(Icons.light_mode_outlined,
+                  color: c.textSecondary),
+              title: Text('浅色',
+                  style: TextStyle(color: c.textPrimary)),
               trailing: current == 1
-                  ? const Icon(Icons.check_rounded, color: AppColors.accent)
+                  ? Icon(Icons.check_rounded, color: c.accent)
                   : null,
               onTap: () {
                 ref.read(themeModeProvider.notifier).state = 1;
                 SettingsNotifier.saveThemeMode(1);
                 Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('重启应用后生效'),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
               },
             ),
           ],
@@ -260,6 +261,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
+    final bodyFont = AppFont.body(context, ref);
     final reminderHour = ref.watch(reminderHourProvider);
     final reminderMinute = ref.watch(reminderMinuteProvider);
     final reminderEnabled = ref.watch(reminderEnabledProvider);
@@ -271,7 +274,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         : '已关闭';
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: c.background,
       body: SafeArea(
         child: Column(
           children: [
@@ -286,21 +289,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: c.surface,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded,
-                          size: 18, color: AppColors.textPrimary),
+                      child: Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 18, color: c.textPrimary),
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Center(
                       child: Text(
                         '设置',
                         style: TextStyle(
-                          fontSize: 17,
+                          fontSize: AppFont.scale(context, ref, 17),
                           fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
+                          color: c.textPrimary,
                         ),
                       ),
                     ),
@@ -371,14 +374,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Widget _buildSectionTitle(String title) {
+    final c = AppColors.of(context);
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 12),
       child: Text(
         title,
-        style: const TextStyle(
-          fontSize: 13,
+        style: TextStyle(
+          fontSize: AppFont.scale(context, ref, 13),
           fontWeight: FontWeight.w500,
-          color: AppColors.textTertiary,
+          color: c.textTertiary,
         ),
       ),
     );
@@ -387,32 +391,33 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget _buildSwitchItem(IconData icon, String title, String subtitle,
       bool value, ValueChanged<bool> onChanged,
       {VoidCallback? onTap}) {
+    final c = AppColors.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 2),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: c.surface,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 22, color: AppColors.textSecondary),
+            Icon(icon, size: 22, color: c.textSecondary),
             const SizedBox(width: 16),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 15,
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                fontSize: AppFont.scale(context, ref, 15),
+                color: c.textPrimary,
               ),
             ),
             const Spacer(),
             Text(
               subtitle,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.textTertiary,
+              style: TextStyle(
+                fontSize: AppFont.scale(context, ref, 14),
+                color: c.textTertiary,
               ),
             ),
             const SizedBox(width: 8),
@@ -421,8 +426,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: Switch(
                 value: value,
                 onChanged: onChanged,
-                activeColor: AppColors.accent,
-                inactiveTrackColor: AppColors.surfaceVariant,
+                activeColor: c.accent,
+                inactiveTrackColor: c.surfaceVariant,
               ),
             ),
           ],
@@ -433,37 +438,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _buildTapItem(
       IconData icon, String title, String subtitle, VoidCallback onTap) {
+    final c = AppColors.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 2),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: c.surface,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 22, color: AppColors.textSecondary),
+            Icon(icon, size: 22, color: c.textSecondary),
             const SizedBox(width: 16),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 15,
-                color: AppColors.textPrimary,
+              style: TextStyle(
+                fontSize: AppFont.scale(context, ref, 15),
+                color: c.textPrimary,
               ),
             ),
             const Spacer(),
             Text(
               subtitle,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.textTertiary,
+              style: TextStyle(
+                fontSize: AppFont.scale(context, ref, 14),
+                color: c.textTertiary,
               ),
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.chevron_right_rounded,
-                size: 20, color: AppColors.textTertiary),
+            Icon(Icons.chevron_right_rounded,
+                size: 20, color: c.textTertiary),
           ],
         ),
       ),

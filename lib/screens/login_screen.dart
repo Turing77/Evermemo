@@ -70,8 +70,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: c.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -80,24 +81,24 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 80),
               // Logo
-              const Center(
+              Center(
                 child: Text(
                   '常记',
                   style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
+                    color: c.textPrimary,
                     letterSpacing: 4,
                   ),
                 ),
               ),
               const SizedBox(height: 8),
-              const Center(
+              Center(
                 child: Text(
                   'Evermemo',
                   style: TextStyle(
                     fontSize: 13,
-                    color: AppColors.textTertiary,
+                    color: c.textTertiary,
                   ),
                 ),
               ),
@@ -133,8 +134,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
                     _error!,
-                    style: const TextStyle(
-                      color: AppColors.danger,
+                    style: TextStyle(
+                      color: c.danger,
                       fontSize: 13,
                     ),
                   ),
@@ -147,26 +148,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
                     color: _isLoading
-                        ? AppColors.accent.withValues(alpha: 0.5)
-                        : AppColors.accent,
+                        ? c.accent.withValues(alpha: 0.5)
+                        : c.accent,
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Center(
                     child: _isLoading
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              color: AppColors.background,
+                              color: c.background,
                             ),
                           )
                         : Text(
                             _isLogin ? '登录' : '注册',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.background,
+                              color: c.background,
                             ),
                           ),
                   ),
@@ -181,11 +182,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       buildFadeRoute(const MainTabScreen()),
                     );
                   },
-                  child: const Text(
+                  child: Text(
                     '跳过，先看看',
                     style: TextStyle(
                       fontSize: 13,
-                      color: AppColors.textTertiary,
+                      color: c.textTertiary,
                     ),
                   ),
                 ),
@@ -199,6 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildTabButton(String label, bool selected) {
+    final c = AppColors.of(context);
     return GestureDetector(
       onTap: () => setState(() {
         _isLogin = label == '登录';
@@ -211,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
             style: TextStyle(
               fontSize: 16,
               fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-              color: selected ? AppColors.textPrimary : AppColors.textTertiary,
+              color: selected ? c.textPrimary : c.textTertiary,
             ),
           ),
           const SizedBox(height: 6),
@@ -219,7 +221,7 @@ class _LoginScreenState extends State<LoginScreen> {
             width: 24,
             height: 2,
             decoration: BoxDecoration(
-              color: selected ? AppColors.accent : Colors.transparent,
+              color: selected ? c.accent : Colors.transparent,
               borderRadius: BorderRadius.circular(1),
             ),
           ),
@@ -235,20 +237,21 @@ class _LoginScreenState extends State<LoginScreen> {
     bool obscure = false,
     TextInputType? keyboardType,
   }) {
+    final c = AppColors.of(context);
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: c.surface,
         borderRadius: BorderRadius.circular(14),
       ),
       child: TextField(
         controller: controller,
         obscureText: obscure,
         keyboardType: keyboardType,
-        style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
+        style: TextStyle(color: c.textPrimary, fontSize: 15),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: const TextStyle(color: AppColors.textTertiary),
-          prefixIcon: Icon(icon, color: AppColors.textTertiary, size: 20),
+          hintStyle: TextStyle(color: c.textTertiary),
+          prefixIcon: Icon(icon, color: c.textTertiary, size: 20),
           border: InputBorder.none,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

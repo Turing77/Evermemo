@@ -21,6 +21,7 @@ class ThoughtCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0.0, end: 1.0),
       duration: Duration(milliseconds: 400 + (index * 60)),
@@ -39,7 +40,7 @@ class ThoughtCard extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: c.surface,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Padding(
@@ -51,9 +52,9 @@ class ThoughtCard extends StatelessWidget {
                   children: [
                     Text(
                       DateFormat('MM月dd日 HH:mm').format(thought.createdAt),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textTertiary,
+                        color: c.textTertiary,
                       ),
                     ),
                     const Spacer(),
@@ -86,7 +87,7 @@ class ThoughtCard extends StatelessWidget {
                           size: 20,
                           color: thought.isFavorite
                               ? const Color(0xFFFFD666)
-                              : AppColors.textTertiary,
+                              : c.textTertiary,
                         ),
                       ),
                     ],
@@ -95,10 +96,10 @@ class ThoughtCard extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text(
                   thought.content,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 15,
                     height: 1.6,
-                    color: AppColors.textPrimary,
+                    color: c.textPrimary,
                   ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -115,20 +116,20 @@ class ThoughtCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: AppColors.surfaceVariant,
+                            color: c.surfaceVariant,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.image_outlined,
-                                  size: 14, color: AppColors.textTertiary),
+                              Icon(Icons.image_outlined,
+                                  size: 14, color: c.textTertiary),
                               const SizedBox(width: 4),
                               Text(
                                 '${thought.imagePathList.length}',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 11,
-                                  color: AppColors.textTertiary,
+                                  color: c.textTertiary,
                                 ),
                               ),
                             ],
@@ -144,20 +145,20 @@ class ThoughtCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
-                            color: AppColors.surfaceVariant,
+                            color: c.surfaceVariant,
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(Icons.mic_outlined,
-                                  size: 14, color: AppColors.textTertiary),
-                              SizedBox(width: 4),
+                                  size: 14, color: c.textTertiary),
+                              const SizedBox(width: 4),
                               Text(
                                 '语音',
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: AppColors.textTertiary,
+                                  color: c.textTertiary,
                                 ),
                               ),
                             ],

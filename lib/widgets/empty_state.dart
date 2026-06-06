@@ -15,6 +15,7 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final c = AppColors.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -23,30 +24,30 @@ class EmptyState extends StatelessWidget {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: c.surface,
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
               size: 36,
-              color: AppColors.textTertiary,
+              color: c.textTertiary,
             ),
           ),
           const SizedBox(height: 20),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: AppColors.textSecondary,
+              color: c.textSecondary,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             subtitle,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
-              color: AppColors.textTertiary,
+              color: c.textTertiary,
             ),
           ),
         ],
